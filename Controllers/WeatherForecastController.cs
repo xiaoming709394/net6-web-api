@@ -27,7 +27,7 @@ namespace net6_web_api.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            _logger.LogInformation("i am log");
+            //_logger.LogInformation("i am log");
 
             //≤È—Ø
             var Students = _context.Students.ToList();

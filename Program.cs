@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using net6_web_api.DB;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //将EF core上下文类注册到了依赖项注入容器
+//builder.Services.AddDbContext<SchoolContext>(options =>
+// options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));//SchoolContext是appsetting的数据库配置参数名称
+//Mysql
+//目前MySql.Data.EntityFrameworkCore（8.0.22）只支持Microsoft.EntityFrameworkCore(3.11)及以下版本，Microsoft.EntityFrameworkCore(5.0.12)(6.0.0)都不支持
 builder.Services.AddDbContext<SchoolContext>(options =>
- options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));//SchoolContext是appsetting的数据库配置参数名称
+ options.UseMySQL(builder.Configuration.GetConnectionString("SchoolContext")));
 
 // 配置NLog
 builder.Logging.ClearProviders();
@@ -31,6 +36,9 @@ builder.Services.AddCors(policy =>
     .WithExposedHeaders("X-Pagination"));
 });
 
+//注意：需要与dockerfile开放端口一致
+builder.WebHost.UseUrls(new[] { "http://*:83" });
+
 var app = builder.Build();
 
 //跨域
@@ -38,6 +46,13 @@ app.UseCors("CorsPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+//生产环境启用SwaggerUI
+if (app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
