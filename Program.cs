@@ -39,6 +39,12 @@ builder.Services.AddCors(policy =>
 //注意：需要与dockerfile开放端口一致
 builder.WebHost.UseUrls(new[] { "http://*:83" });
 
+//解决返回数据的字段首字母自动变成小写的问题
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
+
 var app = builder.Build();
 
 //跨域

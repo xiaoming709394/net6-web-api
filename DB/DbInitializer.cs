@@ -12,6 +12,13 @@ namespace net6_web_api.DB
                 return;   // DB has been seeded
             }
 
+            var lucky = new LuckySheet[]
+            {
+                new LuckySheet {Title="1", Data="2", User="3"}
+            };
+            context.LuckySheet.AddRange(lucky);
+            context.SaveChanges();
+
             var students = new Student[]
             {
                 new Student{FirstMidName="Carson",LastName="Alexander",EnrollmentDate=DateTime.Parse("2019-09-01")},
