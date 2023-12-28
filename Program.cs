@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
 using net6_web_api.DB;
 using NLog.Extensions.Logging;
 using NLog.Web;
@@ -13,20 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//½«EF coreÉÏÏÂÎÄÀà×¢²áµ½ÁËÒÀÀµÏî×¢ÈëÈİÆ÷
+//å°†EF coreä¸Šä¸‹æ–‡ç±»æ³¨å†Œåˆ°äº†ä¾èµ–é¡¹æ³¨å…¥å®¹å™¨
 //builder.Services.AddDbContext<SchoolContext>(options =>
-// options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));//SchoolContextÊÇappsettingµÄÊı¾İ¿âÅäÖÃ²ÎÊıÃû³Æ
+// options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));//SchoolContextæ˜¯appsettingçš„æ•°æ®åº“é…ç½®å‚æ•°åç§°
 //Mysql
-//Ä¿Ç°MySql.Data.EntityFrameworkCore£¨8.0.22£©Ö»Ö§³ÖMicrosoft.EntityFrameworkCore(3.11)¼°ÒÔÏÂ°æ±¾£¬Microsoft.EntityFrameworkCore(5.0.12)(6.0.0)¶¼²»Ö§³Ö
+//ç›®å‰MySql.Data.EntityFrameworkCoreï¼ˆ8.0.22ï¼‰åªæ”¯æŒMicrosoft.EntityFrameworkCore(3.11)åŠä»¥ä¸‹ç‰ˆæœ¬ï¼ŒMicrosoft.EntityFrameworkCore(5.0.12)(6.0.0)éƒ½ä¸æ”¯æŒ
 builder.Services.AddDbContext<SchoolContext>(options =>
  options.UseMySQL(builder.Configuration.GetConnectionString("SchoolContext")));
 
-// ÅäÖÃNLog
+// é…ç½®NLog
 builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Logging.AddNLog();
 
-// ÅäÖÃ¿çÓò´¦Àí£¬ÔÊĞíËùÓĞÀ´Ô´
+// é…ç½®è·¨åŸŸå¤„ç†ï¼Œå…è®¸æ‰€æœ‰æ¥æº
 builder.Services.AddCors(policy =>
 {
     policy.AddPolicy("CorsPolicy", opt => opt
@@ -36,10 +36,10 @@ builder.Services.AddCors(policy =>
     .WithExposedHeaders("X-Pagination"));
 });
 
-//×¢Òâ£ºĞèÒªÓëdockerfile¿ª·Å¶Ë¿ÚÒ»ÖÂ
-builder.WebHost.UseUrls(new[] { "http://*:83" });
+//æ³¨æ„ï¼šéœ€è¦ä¸dockerfileå¼€æ”¾ç«¯å£ä¸€è‡´
+//builder.WebHost.UseUrls(new[] { "http://*:80" });
 
-//½â¾ö·µ»ØÊı¾İµÄ×Ö¶ÎÊ××ÖÄ¸×Ô¶¯±ä³ÉĞ¡Ğ´µÄÎÊÌâ
+//è§£å†³è¿”å›æ•°æ®çš„å­—æ®µé¦–å­—æ¯è‡ªåŠ¨å˜æˆå°å†™çš„é—®é¢˜
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -47,7 +47,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
-//¿çÓò
+//è·¨åŸŸ
 app.UseCors("CorsPolicy");
 
 // Configure the HTTP request pipeline.
@@ -57,7 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//Éú²ú»·¾³ÆôÓÃSwaggerUI
+//ç”Ÿäº§ç¯å¢ƒå¯ç”¨SwaggerUI
 if (app.Environment.IsProduction())
 {
     app.UseSwagger();
@@ -68,15 +68,15 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//EFÏà¹ØµÄ³õÊ¼»¯
+//EFç›¸å…³çš„åˆå§‹åŒ–
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
     var context = services.GetRequiredService<SchoolContext>();
-    //ĞÂ½¨Êı¾İ¿â
+    //æ–°å»ºæ•°æ®åº“
     context.Database.EnsureCreated();
-    //³õÊ¼»¯Êı¾İ£¨Éè¶¨Êı¾İ¿âÖÖ×Ó£©
+    //åˆå§‹åŒ–æ•°æ®ï¼ˆè®¾å®šæ•°æ®åº“ç§å­ï¼‰
     DbInitializer.Initialize(context);
 }
 
